@@ -1,27 +1,170 @@
-
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEMOKITTENS.COM - Est. 2024</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #00ff00;
+            background-color: #000000;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9)),
+                            url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23001100' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid #00ff00;
+            padding: 20px;
+            box-shadow: 5px 5px 0 #00ff00;
+        }
+        h1, h2, h3 {
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+            text-align: center;
+            text-shadow: 2px 2px #ff00ff;
+            color: #00ffff;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 0;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff00ff;
+            }
+            to {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff00ff;
+            }
+        }
+        .blink {
+            animation: blink-animation 1s steps(5, start) infinite;
+        }
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
+            }
+        }
+        .ascii-art {
+            font-family: monospace;
+            white-space: pre;
+            text-align: center;
+            color: #00ffff;
+            margin: 20px 0;
+            font-size: 12px;
+        }
+        .navigation {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            border-top: 2px dashed #00ff00;
+            border-bottom: 2px dashed #00ff00;
+        }
+        .navigation a {
+            color: #ff00ff;
+            text-decoration: none;
+            margin: 0 10px;
+            font-weight: bold;
+        }
+        .navigation a:hover {
+            color: #00ffff;
+            text-decoration: underline;
+        }
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+        .counter {
+            text-align: center;
+            font-family: 'Digital', 'Courier New', Courier, monospace;
+            color: #ff00ff;
+            margin-top: 20px;
+        }
+        marquee {
+            color: #00ffff;
+            margin: 20px 0;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #00ff00;
+        }
+        .button {
+            background: #000;
+            border: 2px solid #00ff00;
+            color: #00ff00;
+            padding: 5px 15px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+            text-transform: uppercase;
+        }
+        .button:hover {
+            background: #00ff00;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="ascii-art">
    /\___/\  
   (  o o  )
     (  =^=  ) 
    (--m-m-)
 DEMOKITTENS
-        
-DEMOKITTENS.COM
-*** POP CULTURE AND CATS SINCE 2016 *** MAKING YOUR CHATS KAWAII ONE STICKER AT A TIME ***
-[YOUTUBE] [CONTACT] [POLICY]
->>> WHAT WE DO <<<
-►
-YOUTUBE CHANNEL: Pop culture theories & Stranger Things deep dives
-IMESSAGE STICKERS: Kawaii-style sticker packs for your chats
->>> POLICIES <<<
-PRIVACY POLICY
-WE COLLECT:
-* YouTube analytics * App Store stats * Your awesome feedback (optional)
-CONTENT POLICY
-OUR STUFF IS:
-* Family-friendly * Totally rad * Original content * Fair use compliant
-YOU ARE VISITOR #0000001
-BEST VIEWED WITH ANY BROWSER
-[Last Updated: 2024]
-<< DEMOKITTENS © 2024 >>
-Made with ♥ and lots of nostalgia
-© 2018-2024 demokittens.com
+        </div>
+
+        <h1>DEMOKITTENS.COM</h1>
+        <marquee scrollamount="3">*** POP CULTURE AND CATS SINCE 2016 *** MAKING YOUR CHATS KAWAII ONE STICKER AT A TIME ***</marquee>
+
+        <div class="navigation">
+            <a href="https://www.youtube.com/@DemokittensOfficial" target="_blank">[YOUTUBE]</a>
+            <a href="mailto:support@demokittens.com">[CONTACT]</a>
+            <a href="#policy">[POLICY]</a>
+        </div>
+
+        <div class="section">
+            <h2>>>> WHAT WE DO <<<</h2>
+            <p class="blink">►</p>
+            <p>YOUTUBE CHANNEL: Pop culture theories & Stranger Things deep dives</p>
+            <p>IMESSAGE STICKERS: Kawaii-style sticker packs for your chats</p>
+        </div>
+
+        <div class="section" id="policy">
+            <h2>>>> POLICIES <<<</h2>
+            <h3>PRIVACY POLICY</h3>
+            <p>WE COLLECT:</p>
+            <p>* YouTube analytics<br>
+            * App Store stats<br>
+            * Your awesome feedback (optional)</p>
+
+            <h3>CONTENT POLICY</h3>
+            <p>OUR STUFF IS:</p>
+            <p>* Family-friendly<br>
+            * Totally rad<br>
+            * Original content<br>
+            * Fair use compliant</p>
+        </div>
+
+        <div class="counter">
+            <p>YOU ARE VISITOR #0000001</p>
+            <p>BEST VIEWED WITH ANY BROWSER</p>
+        </div>
+
+        <div class="footer">
+            <p>[Last Updated: 2024]</p>
+            <p><< DEMOKITTENS © 2024 >></p>
+            <p>Made with ♥ and <blink>lots of nostalgia</blink></p>
+            <p>&copy; 2018-2024 demokittens.com</p>
+        </div>
+    </div>
+</body>
+</html>

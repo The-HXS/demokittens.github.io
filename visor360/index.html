@@ -1,18 +1,52 @@
+# HTML mejorado con zoom (FOV) y botón de pantalla completa
+enhanced_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Visor 360</title>
+  <title>Visor 360 – demokittens</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    #fullscreen-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 999;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: sans-serif;
+    }
+  </style>
 </head>
 <body>
-  <a-scene>
-    <a-assets>
-      <img id="panorama" src="panorama360.png" crossorigin="anonymous"/>
-    </a-assets>
+  <button id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
 
-    <a-sky src="#panorama" rotation="0 -90 0"></a-sky>
+  <a-scene>
+    <a-sky src="panorama360.png" rotation="0 -90 0"></a-sky>
+    <a-entity camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
   </a-scene>
+
+  <script>
+    function enterFullscreen() {
+      const scene = document.querySelector('a-scene');
+      if (scene.requestFullscreen) {
+        scene.requestFullscreen();
+      }
+    }
+  </script>
 </body>
 </html>
+"""
+
+# Guardar como nuevo index.html sobrescribiendo
+enhanced_index_path = "/mnt/data/index.html"
+with open(enhanced_index_path, "w") as f:
+    f.write(enhanced_html)
+
+enhanced_index_path

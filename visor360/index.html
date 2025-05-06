@@ -1,5 +1,5 @@
-# Redefinir el contenido HTML porque la variable anterior se perdió tras el error
-hotspot_scene_html_retry = """
+# Generar HTML completo final con soporte para pitch (paneo vertical), fade, sonido, hotspots y navegación
+html_final = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -25,9 +25,23 @@ hotspot_scene_html_retry = """
     #zoom-out-btn { bottom: 10px; left: 10px; }
     #next-btn { top: 10px; left: 10px; }
     #home-btn { top: 60px; left: 10px; }
+    #fade-plane {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      background: black;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      z-index: 998;
+      pointer-events: none;
+      transition: opacity 1s ease;
+    }
   </style>
 </head>
 <body>
+  <div id="fade-plane"></div>
+
   <button class="btn" id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
   <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
   <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
@@ -37,11 +51,18 @@ hotspot_scene_html_retry = """
   <a-scene>
     <a-assets>
       <img id="img360" src="panorama360.png" />
+      <audio id="clic-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_38e9743cf2.mp3?filename=click-124467.mp3"></audio>
     </a-assets>
 
     <a-sky id="sky360" src="#img360" rotation="0 -90 0"></a-sky>
 
-    <a-entity id="cam" camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
+    <a-entity 
+      id="cam" 
+      camera="fov: 80" 
+      look-controls="touchEnabled: true; magicWindowTrackingEnabled: true" 
+      wasd-controls 
+      position="0 1.6 0">
+    </a-entity>
 
     <a-entity 
       id="hotspot"
@@ -49,8 +70,6 @@ hotspot_scene_html_retry = """
       material="color: #FFD700; opacity: 0.5; shader: flat"
       position="2 1.5 -3"
       class="clickable"
-      event-set__enter="_event: click; _target: #img360; src: espacio2.png"
-      animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; dur: 1000; loop: true"
       visible="true"
       onclick="cambiarImagen('espacio2.png')"
     ></a-entity>
@@ -84,19 +103,28 @@ hotspot_scene_html_retry = """
     }
 
     function cambiarImagen(nuevaRuta) {
+      const fade = document.getElementById('fade-plane');
+      const audio = document.getElementById('clic-sound');
       const img360 = document.querySelector('#img360');
-      const sky360 = document.querySelector('#sky360');
       const hotspot = document.querySelector('#hotspot');
       const hotspot2 = document.querySelector('#hotspot2');
 
-      img360.setAttribute('src', nuevaRuta);
-      if (nuevaRuta === 'espacio2.png') {
-        hotspot.setAttribute('visible', 'false');
-        hotspot2.setAttribute('visible', 'true');
-      } else {
-        hotspot.setAttribute('visible', 'true');
-        hotspot2.setAttribute('visible', 'false');
-      }
+      fade.style.opacity = 1;
+      audio.play();
+
+      setTimeout(() => {
+        img360.setAttribute('src', nuevaRuta);
+        if (nuevaRuta === 'espacio2.png') {
+          hotspot.setAttribute('visible', 'false');
+          hotspot2.setAttribute('visible', 'true');
+        } else {
+          hotspot.setAttribute('visible', 'true');
+          hotspot2.setAttribute('visible', 'false');
+        }
+        setTimeout(() => {
+          fade.style.opacity = 0;
+        }, 100);
+      }, 800);
     }
 
     document.body.addEventListener('gesturestart', function () {
@@ -107,9 +135,9 @@ hotspot_scene_html_retry = """
 </html>
 """
 
-# Guardar el archivo
-final_path = "/mnt/data/index.html"
-with open(final_path, "w") as f:
-    f.write(hotspot_scene_html_retry)
+# Guardar el archivo final
+final_html_path = "/mnt/data/index.html"
+with open(final_html_path, "w") as f:
+    f.write(html_final)
 
-final_path
+final_html_path

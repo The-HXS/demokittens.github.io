@@ -1,5 +1,5 @@
-# HTML mejorado con zoom (FOV) y botón de pantalla completa
-enhanced_html = """
+# HTML con zoom interactivo por botones + intento de pantalla completa compatible con gesture en Safari
+zoom_fullscreen_html = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,12 +9,10 @@ enhanced_html = """
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <style>
     body { margin: 0; overflow: hidden; }
-    #fullscreen-btn {
+    .btn {
       position: absolute;
-      top: 10px;
-      right: 10px;
       z-index: 999;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0, 0, 0, 0.6);
       color: white;
       border: none;
       padding: 10px 15px;
@@ -22,14 +20,19 @@ enhanced_html = """
       cursor: pointer;
       font-family: sans-serif;
     }
+    #fullscreen-btn { top: 10px; right: 10px; }
+    #zoom-in-btn { bottom: 60px; left: 10px; }
+    #zoom-out-btn { bottom: 10px; left: 10px; }
   </style>
 </head>
 <body>
-  <button id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
+  <button class="btn" id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
+  <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
+  <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
 
   <a-scene>
     <a-sky src="panorama360.png" rotation="0 -90 0"></a-sky>
-    <a-entity camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
+    <a-entity id="cam" camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
   </a-scene>
 
   <script>
@@ -37,16 +40,30 @@ enhanced_html = """
       const scene = document.querySelector('a-scene');
       if (scene.requestFullscreen) {
         scene.requestFullscreen();
+      } else if (scene.webkitRequestFullscreen) {
+        scene.webkitRequestFullscreen();
       }
     }
+
+    function adjustFOV(delta) {
+      const camera = document.querySelector('#cam');
+      const currentFOV = camera.getAttribute('camera').fov;
+      const newFOV = Math.max(30, Math.min(120, currentFOV + delta));
+      camera.setAttribute('camera', 'fov', newFOV);
+    }
+
+    // gesture workaround for Safari
+    document.body.addEventListener('gesturestart', function () {
+      enterFullscreen();
+    });
   </script>
 </body>
 </html>
 """
 
-# Guardar como nuevo index.html sobrescribiendo
-enhanced_index_path = "/mnt/data/index.html"
-with open(enhanced_index_path, "w") as f:
-    f.write(enhanced_html)
+# Guardar archivo HTML final
+zoom_fullscreen_path = "/mnt/data/index.html"
+with open(zoom_fullscreen_path, "w") as f:
+    f.write(zoom_fullscreen_html)
 
-enhanced_index_path
+zoom_fullscreen_path

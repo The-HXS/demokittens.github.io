@@ -1,3 +1,5 @@
+# Redefinir el contenido HTML porque la variable anterior se perdió tras el error
+hotspot_scene_html_retry = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -38,7 +40,30 @@
     </a-assets>
 
     <a-sky id="sky360" src="#img360" rotation="0 -90 0"></a-sky>
+
     <a-entity id="cam" camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
+
+    <a-entity 
+      id="hotspot"
+      geometry="primitive: circle; radius: 0.3"
+      material="color: #FFD700; opacity: 0.5; shader: flat"
+      position="2 1.5 -3"
+      class="clickable"
+      event-set__enter="_event: click; _target: #img360; src: espacio2.png"
+      animation="property: scale; to: 1.1 1.1 1.1; dir: alternate; dur: 1000; loop: true"
+      visible="true"
+      onclick="cambiarImagen('espacio2.png')"
+    ></a-entity>
+
+    <a-entity 
+      id="hotspot2"
+      geometry="primitive: circle; radius: 0.3"
+      material="color: #00BFFF; opacity: 0.5; shader: flat"
+      position="-2 1.5 -3"
+      class="clickable"
+      visible="false"
+      onclick="cambiarImagen('panorama360.png')"
+    ></a-entity>
   </a-scene>
 
   <script>
@@ -59,13 +84,32 @@
     }
 
     function cambiarImagen(nuevaRuta) {
-      document.querySelector('#img360').setAttribute('src', nuevaRuta);
+      const img360 = document.querySelector('#img360');
+      const sky360 = document.querySelector('#sky360');
+      const hotspot = document.querySelector('#hotspot');
+      const hotspot2 = document.querySelector('#hotspot2');
+
+      img360.setAttribute('src', nuevaRuta);
+      if (nuevaRuta === 'espacio2.png') {
+        hotspot.setAttribute('visible', 'false');
+        hotspot2.setAttribute('visible', 'true');
+      } else {
+        hotspot.setAttribute('visible', 'true');
+        hotspot2.setAttribute('visible', 'false');
+      }
     }
 
-    // Safari gesture workaround
-    document.body.addEventListener('gesturestart', () => {
+    document.body.addEventListener('gesturestart', function () {
       enterFullscreen();
     });
   </script>
 </body>
 </html>
+"""
+
+# Guardar el archivo
+final_path = "/mnt/data/index.html"
+with open(final_path, "w") as f:
+    f.write(hotspot_scene_html_retry)
+
+final_path

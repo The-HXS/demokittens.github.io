@@ -1,92 +1,99 @@
 <!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Visor 360 – demokittens</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <style>
-      body { margin: 0; overflow: hidden; }
-      .btn {
-        position: absolute;
-        z-index: 999;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        border: none;
-        padding: 10px 14px;
-        border-radius: 5px;
-        font-size: 18px;
-        cursor: pointer;
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Visor 360 – demokittens</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    body { margin: 0; overflow: hidden; }
+    .btn {
+      position: absolute;
+      z-index: 999;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: sans-serif;
+    }
+    #fullscreen-btn { top: 10px; right: 10px; }
+    #zoom-in-btn { bottom: 60px; left: 10px; }
+    #zoom-out-btn { bottom: 10px; left: 10px; }
+    #fade {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: black;
+      opacity: 0;
+      z-index: 998;
+      transition: opacity 1s ease-in-out;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="fade"></div>
+  <button class="btn" id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
+  <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
+  <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
+
+  <a-scene>
+    <a-sky id="sky" src="panorama360.png" rotation="0 -90 0"></a-sky>
+
+    <!-- Cámara -->
+    <a-entity id="cam" camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
+
+    <!-- Íconos navegables -->
+    <a-image id="toEspacio2" src="https://upload.wikimedia.org/wikipedia/commons/7/72/Arrow_east_font_awesome.svg"
+             position="5 1.6 -3" scale="0.7 0.7 0.7" look-at="#cam"
+             class="clickable" onclick="changeScene('espacio2.png')"></a-image>
+
+    <a-image id="toEspacio1" src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Home_font_awesome.svg"
+             position="-5 1.6 -3" scale="0.7 0.7 0.7" look-at="#cam"
+             visible="false" class="clickable" onclick="changeScene('panorama360.png')"></a-image>
+  </a-scene>
+
+  <script>
+    let currentScene = 'panorama360.png';
+
+    function enterFullscreen() {
+      const scene = document.querySelector('a-scene');
+      if (scene.requestFullscreen) {
+        scene.requestFullscreen();
+      } else if (scene.webkitRequestFullscreen) {
+        scene.webkitRequestFullscreen();
       }
-      #fullscreen-btn { top: 10px; right: 10px; }
-      #zoom-in-btn { bottom: 60px; left: 10px; }
-      #zoom-out-btn { bottom: 10px; left: 10px; }
-    </style>
-  </head>
-  <body>
-    <button class="btn" id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
-    <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
-    <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
+    }
 
-    <a-scene>
-      <a-sky id="sky" src="panorama360.png" rotation="0 -90 0"></a-sky>
-      
-      <!-- Cámara con controles -->
-      <a-entity id="cam" camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
+    function adjustFOV(delta) {
+      const camera = document.querySelector('#cam');
+      const currentFOV = camera.getAttribute('camera').fov;
+      const newFOV = Math.max(30, Math.min(120, currentFOV + delta));
+      camera.setAttribute('camera', 'fov', newFOV);
+    }
 
-      <!-- Punto de interacción: cambia a espacio2.png -->
-      <a-image 
-        src="https://cdn-icons-png.flaticon.com/512/60/60995.png"
-        position="3 1.6 -4"
-        scale="0.5 0.5 0.5"
-        transparent="true"
-        opacity="0.8"
-        class="clickable"
-        event-set__enter="_event: mouseenter; opacity: 1"
-        event-set__leave="_event: mouseleave; opacity: 0.8"
-        onclick="changeScene('espacio2.png')">
-      </a-image>
-      
-      <!-- Punto de regreso a panorama360 -->
-      <a-image 
-        src="https://cdn-icons-png.flaticon.com/512/25/25694.png"
-        position="-3 1.6 -4"
-        scale="0.5 0.5 0.5"
-        transparent="true"
-        opacity="0.8"
-        class="clickable"
-        event-set__enter="_event: mouseenter; opacity: 1"
-        event-set__leave="_event: mouseleave; opacity: 0.8"
-        onclick="changeScene('panorama360.png')">
-      </a-image>
-    </a-scene>
+    function changeScene(image) {
+      const fade = document.getElementById('fade');
+      fade.style.opacity = 1;
 
-    <script>
-      function enterFullscreen() {
-        const scene = document.querySelector('a-scene');
-        if (scene.requestFullscreen) {
-          scene.requestFullscreen();
-        } else if (scene.webkitRequestFullscreen) {
-          scene.webkitRequestFullscreen();
-        }
-      }
+      setTimeout(() => {
+        document.getElementById('sky').setAttribute('src', image);
+        currentScene = image;
 
-      function adjustFOV(delta) {
-        const camera = document.querySelector('#cam');
-        const currentFOV = camera.getAttribute('camera').fov;
-        const newFOV = Math.max(30, Math.min(120, currentFOV + delta));
-        camera.setAttribute('camera', 'fov', newFOV);
-      }
+        // Alternar visibilidad de íconos
+        document.getElementById('toEspacio2').setAttribute('visible', image === 'panorama360.png');
+        document.getElementById('toEspacio1').setAttribute('visible', image === 'espacio2.png');
 
-      function changeScene(imageName) {
-        const sky = document.querySelector('#sky');
-        sky.setAttribute('src', imageName);
-      }
+        fade.style.opacity = 0;
+      }, 1000);
+    }
 
-      // iOS gesture fallback
-      document.body.addEventListener('gesturestart', function () {
-        enterFullscreen();
-      });
-    </script>
-  </body>
+    // Safari gesture fix
+    document.body.addEventListener('gesturestart', function () {
+      enterFullscreen();
+    });
+  </script>
+</body>
 </html>

@@ -1,11 +1,12 @@
-# HTML completo restaurado con:
-# - Paneo vertical + horizontal
-# - Fade entre escenas
-# - Hotspots visibles en VR
-# - Iconos clicables para iPhone/Desktop
-# - Zoom y pantalla completa
+# HTML completo con:
+# - Fade corregido
+# - Cambio directo en <a-sky>
+# - Hotspots clicables con cursor VR (gaze)
+# - Íconos restaurados
+# - Zoom y fullscreen
+# - Paneo vertical/horizontal
 
-html_restaurado = """
+html_vr_clickable = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -52,50 +53,50 @@ html_restaurado = """
 
   <a-scene>
     <a-assets>
-      <img id="img360" src="panorama360.png" />
+      <img id="imgPanorama" src="panorama360.png" />
+      <img id="imgEspacio2" src="espacio2.png" />
     </a-assets>
 
-    <a-sky id="sky360" src="#img360" rotation="0 -90 0"></a-sky>
-    <a-entity id="cam" camera="fov: 80" look-controls="touchEnabled: true; magicWindowTrackingEnabled: true" wasd-controls position="0 1.6 0"></a-entity>
+    <a-sky id="sky360" src="#imgPanorama" rotation="0 -90 0"></a-sky>
 
-    <a-entity id="hotspot"
-      geometry="primitive: circle; radius: 0.3"
+    <a-entity id="cam" camera="fov: 80"
+      look-controls="touchEnabled: true; magicWindowTrackingEnabled: true"
+      wasd-controls position="0 1.6 0">
+      <a-cursor fuse="true" fuse-timeout="1000"
+        material="color: white; shader: flat; opacity: 0.6">
+      </a-cursor>
+    </a-entity>
+
+    <!-- Hotspots VR -->
+    <a-circle id="hotspot"
+      radius="0.4" position="3 1.6 -4" rotation="0 0 0"
       material="color: #FFD700; opacity: 0.5; shader: flat"
-      position="2 1.5 -3"
-      class="clickable"
-      visible="true"
-      onclick="cambiarImagen('espacio2.png')"
-    ></a-entity>
+      class="clickable" visible="true"
+      onclick="cambiarImagen('espacio2.png')">
+    </a-circle>
 
-    <a-entity id="hotspot2"
-      geometry="primitive: circle; radius: 0.3"
+    <a-circle id="hotspot2"
+      radius="0.4" position="-3 1.6 -4" rotation="0 0 0"
       material="color: #00BFFF; opacity: 0.5; shader: flat"
-      position="-2 1.5 -3"
-      class="clickable"
-      visible="false"
-      onclick="cambiarImagen('panorama360.png')"
-    ></a-entity>
+      class="clickable" visible="false"
+      onclick="cambiarImagen('panorama360.png')">
+    </a-circle>
 
-    <!-- Iconos clicables visuales para iPhone/Desktop -->
+    <!-- Iconos visuales -->
     <a-image id="iconNext"
       src="https://upload.wikimedia.org/wikipedia/commons/7/72/Arrow_east_font_awesome.svg"
-      position="3 2 -4"
-      scale="0.5 0.5 0.5"
-      look-at="#cam"
-      visible="true"
-      class="clickable"
-      onclick="cambiarImagen('espacio2.png')"
-    ></a-image>
+      position="3 2 -4" scale="0.5 0.5 0.5"
+      look-at="#cam" visible="true"
+      onclick="cambiarImagen('espacio2.png')">
+    </a-image>
 
     <a-image id="iconBack"
       src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Home_font_awesome.svg"
-      position="-3 2 -4"
-      scale="0.5 0.5 0.5"
-      look-at="#cam"
-      visible="false"
-      class="clickable"
-      onclick="cambiarImagen('panorama360.png')"
-    ></a-image>
+      position="-3 2 -4" scale="0.5 0.5 0.5"
+      look-at="#cam" visible="false"
+      onclick="cambiarImagen('panorama360.png')">
+    </a-image>
+
   </a-scene>
 
   <script>
@@ -116,33 +117,27 @@ html_restaurado = """
     }
 
     function cambiarImagen(nuevaRuta) {
-  const fade = document.getElementById('fade-plane');
-  const sky = document.querySelector('#sky360');
-  const hotspot = document.querySelector('#hotspot');
-  const hotspot2 = document.querySelector('#hotspot2');
-  const iconNext = document.querySelector('#iconNext');
-  const iconBack = document.querySelector('#iconBack');
+      const fade = document.getElementById('fade-plane');
+      const sky = document.getElementById('sky360');
+      const hotspot = document.getElementById('hotspot');
+      const hotspot2 = document.getElementById('hotspot2');
+      const iconNext = document.getElementById('iconNext');
+      const iconBack = document.getElementById('iconBack');
 
-  fade.style.opacity = 1;
+      fade.style.opacity = 1;
 
-  setTimeout(() => {
-    sky.setAttribute('src', nuevaRuta); // CAMBIO DIRECTO AL SKY
-    if (nuevaRuta === 'espacio2.png') {
-      hotspot.setAttribute('visible', 'false');
-      hotspot2.setAttribute('visible', 'true');
-      iconNext.setAttribute('visible', 'false');
-      iconBack.setAttribute('visible', 'true');
-    } else {
-      hotspot.setAttribute('visible', 'true');
-      hotspot2.setAttribute('visible', 'false');
-      iconNext.setAttribute('visible', 'true');
-      iconBack.setAttribute('visible', 'false');
+      setTimeout(() => {
+        sky.setAttribute('src', nuevaRuta);
+        hotspot.setAttribute('visible', nuevaRuta === 'panorama360.png');
+        hotspot2.setAttribute('visible', nuevaRuta === 'espacio2.png');
+        iconNext.setAttribute('visible', nuevaRuta === 'panorama360.png');
+        iconBack.setAttribute('visible', nuevaRuta === 'espacio2.png');
+
+        setTimeout(() => {
+          fade.style.opacity = 0;
+        }, 100);
+      }, 800);
     }
-    setTimeout(() => {
-      fade.style.opacity = 0;
-    }, 100);
-  }, 800);
-}
 
     document.body.addEventListener('gesturestart', function () {
       enterFullscreen();
@@ -153,8 +148,8 @@ html_restaurado = """
 """
 
 # Guardar como index.html
-restaurado_path = "/mnt/data/index.html"
-with open(restaurado_path, "w") as f:
-    f.write(html_restaurado)
+final_vr_path = "/mnt/data/index.html"
+with open(final_vr_path, "w") as f:
+    f.write(html_vr_clickable)
 
-restaurado_path
+final_vr_path

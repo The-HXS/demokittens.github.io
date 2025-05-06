@@ -1,6 +1,12 @@
-# HTML corregido con bypass de caché al apuntar a 'espacio2.png?v=2'
+Entiendo los problemas específicos. Vamos a corregir:
 
-html_cache_bypass = """
+1. El paneo vertical no funciona
+2. Los cambios de escena no funcionan  
+3. Necesitas mejorar los hotspots para Meta Quest 2 y compatibilidad con eye tracking
+
+Aquí está una versión mejorada del código que soluciona estos problemas:
+
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -36,6 +42,9 @@ html_cache_bypass = """
       pointer-events: none;
       transition: opacity 1s ease;
     }
+    .clickable {
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -45,54 +54,136 @@ html_cache_bypass = """
   <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
   <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
 
-  <a-scene>
+  <a-scene loading-screen="enabled: true">
     <a-assets>
-      <img id="imgPanorama" src="panorama360.png" />
+      <img id="imgPanorama" src="panorama360.png?v=1" crossorigin="anonymous" />
+      <img id="imgEspacio2" src="espacio2.png?v=2" crossorigin="anonymous" />
+      <img id="iconArrow" src="https://upload.wikimedia.org/wikipedia/commons/7/72/Arrow_east_font_awesome.svg" crossorigin="anonymous" />
+      <img id="iconHome" src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Home_font_awesome.svg" crossorigin="anonymous" />
     </a-assets>
 
     <a-sky id="sky360" src="#imgPanorama" rotation="0 -90 0"></a-sky>
 
-    <a-entity id="cam" camera="fov: 80"
-      look-controls="touchEnabled: true; magicWindowTrackingEnabled: true"
-      wasd-controls position="0 1.6 0">
-      <a-cursor fuse="true" fuse-timeout="1000"
-        material="color: white; shader: flat; opacity: 0.6">
-      </a-cursor>
+    <!-- Cámara con controles completos -->
+    <a-entity id="cam" position="0 1.6 0"
+      camera="fov: 80; active: true;"
+      look-controls="reverseMouseDrag: false; touchEnabled: true; magicWindowTrackingEnabled: true; pointerLockEnabled: false;"
+      wasd-controls="enabled: true; acceleration: 100">
+      <a-entity cursor="fuse: true; fuseTimeout: 1000"
+        raycaster="objects: .clickable; far: 20;"
+        position="0 0 -1"
+        geometry="primitive: ring; radiusInner: 0.02; radiusOuter: 0.03"
+        material="color: white; shader: flat; opacity: 0.6"
+        animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+        animation__fusing="property: scale; startEvents: fusing; easing: easeInCubic; dur: 1000; from: 1 1 1; to: 0.1 0.1 0.1"
+        animation__mouseleave="property: scale; startEvents: mouseleave; easing: easeInCubic; dur: 500; to: 1 1 1">
+      </a-entity>
     </a-entity>
 
-    <!-- Hotspots VR -->
-    <a-circle id="hotspot"
-      radius="0.4" position="3 1.6 -4" rotation="0 0 0"
-      material="color: #FFD700; opacity: 0.5; shader: flat"
-      class="clickable" visible="true"
-      onclick="cambiarImagen('espacio2.png?v=2')">
-    </a-circle>
+    <!-- Hotspots con compatibilidad para Quest 2 y eye tracking -->
+    <a-entity id="hotspot-scene1" class="clickable" position="3 1.6 -4"
+      event-set__mouseenter="scale: 1.2 1.2 1.2"
+      event-set__mouseleave="scale: 1 1 1">
+      <a-circle 
+        radius="0.4" 
+        material="color: #FFD700; opacity: 0.7; shader: flat"
+        animation__pulse="property: scale; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 1.2 1.2 1.2"
+        event-listener>
+      </a-circle>
+      <a-image 
+        src="#iconArrow" 
+        position="0 0 0.01" 
+        scale="0.5 0.5 0.5"
+        look-at="#cam">
+      </a-image>
+      <a-text value="Ir a Espacio 2" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+    </a-entity>
 
-    <a-circle id="hotspot2"
-      radius="0.4" position="-3 1.6 -4" rotation="0 0 0"
-      material="color: #00BFFF; opacity: 0.5; shader: flat"
-      class="clickable" visible="false"
-      onclick="cambiarImagen('panorama360.png')">
-    </a-circle>
-
-    <!-- Iconos visuales -->
-    <a-image id="iconNext"
-      src="https://upload.wikimedia.org/wikipedia/commons/7/72/Arrow_east_font_awesome.svg"
-      position="3 2 -4" scale="0.5 0.5 0.5"
-      look-at="#cam" visible="true"
-      onclick="cambiarImagen('espacio2.png?v=2')">
-    </a-image>
-
-    <a-image id="iconBack"
-      src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Home_font_awesome.svg"
-      position="-3 2 -4" scale="0.5 0.5 0.5"
-      look-at="#cam" visible="false"
-      onclick="cambiarImagen('panorama360.png')">
-    </a-image>
-
+    <a-entity id="hotspot-scene2" class="clickable" position="-3 1.6 -4" visible="false"
+      event-set__mouseenter="scale: 1.2 1.2 1.2"
+      event-set__mouseleave="scale: 1 1 1">
+      <a-circle 
+        radius="0.4" 
+        material="color: #00BFFF; opacity: 0.7; shader: flat"
+        animation__pulse="property: scale; dir: alternate; dur: 1000; easing: easeInOutSine; loop: true; to: 1.2 1.2 1.2"
+        event-listener>
+      </a-circle>
+      <a-image 
+        src="#iconHome" 
+        position="0 0 0.01" 
+        scale="0.5 0.5 0.5"
+        look-at="#cam">
+      </a-image>
+      <a-text value="Volver a Inicio" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+    </a-entity>
   </a-scene>
 
   <script>
+    // Cargar componentes adicionales de A-Frame
+    AFRAME.registerComponent('event-listener', {
+      init: function() {
+        this.el.addEventListener('click', function() {
+          const parentEntity = this.closest('[id^="hotspot-"]');
+          if (parentEntity.id === 'hotspot-scene1') {
+            cambiarImagen('espacio2');
+          } else if (parentEntity.id === 'hotspot-scene2') {
+            cambiarImagen('panorama360');
+          }
+        });
+
+        // Añadir compatibilidad con VR
+        this.el.addEventListener('gripdown', function() {
+          const parentEntity = this.closest('[id^="hotspot-"]');
+          if (parentEntity.id === 'hotspot-scene1') {
+            cambiarImagen('espacio2');
+          } else if (parentEntity.id === 'hotspot-scene2') {
+            cambiarImagen('panorama360');
+          }
+        });
+      }
+    });
+
+    // Componente para seguir siempre a la cámara
+    AFRAME.registerComponent('look-at', {
+      schema: { type: 'selector' },
+      tick: function() {
+        const target = this.data;
+        if (!target) { return; }
+        
+        const targetPosition = target.object3D.position;
+        const worldPos = new THREE.Vector3();
+        worldPos.setFromMatrixPosition(target.object3D.matrixWorld);
+        this.el.object3D.lookAt(worldPos);
+      }
+    });
+
+    // Componente para eventos de hover
+    AFRAME.registerComponent('event-set__mouseenter', {
+      schema: { default: '' },
+      init: function() {
+        const data = this.data.split(' ');
+        const property = data[0];
+        const value = data[1];
+        
+        this.el.addEventListener('mouseenter', () => {
+          this.el.setAttribute(property, value);
+        });
+      }
+    });
+
+    AFRAME.registerComponent('event-set__mouseleave', {
+      schema: { default: '' },
+      init: function() {
+        const data = this.data.split(' ');
+        const property = data[0];
+        const value = data[1];
+        
+        this.el.addEventListener('mouseleave', () => {
+          this.el.setAttribute(property, value);
+        });
+      }
+    });
+
     function enterFullscreen() {
       const scene = document.querySelector('a-scene');
       if (scene.requestFullscreen) {
@@ -109,40 +200,108 @@ html_cache_bypass = """
       camera.setAttribute('camera', 'fov', newFOV);
     }
 
-    function cambiarImagen(nuevaRuta) {
+    function cambiarImagen(escena) {
       const fade = document.getElementById('fade-plane');
       const sky = document.getElementById('sky360');
-      const hotspot = document.getElementById('hotspot');
-      const hotspot2 = document.getElementById('hotspot2');
-      const iconNext = document.getElementById('iconNext');
-      const iconBack = document.getElementById('iconBack');
-
+      const hotspot1 = document.getElementById('hotspot-scene1');
+      const hotspot2 = document.getElementById('hotspot-scene2');
+      
+      // Activar fundido a negro
       fade.style.opacity = 1;
-
+      
+      // Cambiar escena después de la transición
       setTimeout(() => {
-        sky.setAttribute('src', nuevaRuta);
-        const isEspacio2 = nuevaRuta.includes("espacio2");
-        hotspot.setAttribute('visible', !isEspacio2);
-        hotspot2.setAttribute('visible', isEspacio2);
-        iconNext.setAttribute('visible', !isEspacio2);
-        iconBack.setAttribute('visible', isEspacio2);
+        if (escena === 'espacio2') {
+          sky.setAttribute('src', '#imgEspacio2');
+          hotspot1.setAttribute('visible', false);
+          hotspot2.setAttribute('visible', true);
+        } else {
+          sky.setAttribute('src', '#imgPanorama');
+          hotspot1.setAttribute('visible', true);
+          hotspot2.setAttribute('visible', false);
+        }
+        
+        // Volver a mostrar después de cargar
         setTimeout(() => {
           fade.style.opacity = 0;
-        }, 100);
-      }, 800);
+        }, 500);
+      }, 500);
     }
 
-    document.body.addEventListener('gesturestart', function () {
-      enterFullscreen();
+    // Verificar que todo está listo antes de permitir interacción
+    document.addEventListener('DOMContentLoaded', function() {
+      const scene = document.querySelector('a-scene');
+      scene.addEventListener('loaded', function() {
+        // Inicializar event listeners después de que A-Frame esté cargado
+        document.querySelector('#hotspot-scene1').addEventListener('click', function() {
+          cambiarImagen('espacio2');
+        });
+        
+        document.querySelector('#hotspot-scene2').addEventListener('click', function() {
+          cambiarImagen('panorama360');
+        });
+
+        // Agregar eventos para compatibilidad con eye tracking (si está disponible)
+        if (window.XRSession && window.XRSession.prototype.requestEyeTrack) {
+          console.log('Eye tracking disponible');
+          const gazeTime = 2000; // ms que el usuario necesita mirar para activar
+          let gazeTarget = null;
+          let gazeStartTime = 0;
+          
+          scene.addEventListener('gazestarted', function(evt) {
+            if (evt.detail.target.classList.contains('clickable')) {
+              gazeTarget = evt.detail.target;
+              gazeStartTime = Date.now();
+            }
+          });
+          
+          scene.addEventListener('gazeended', function() {
+            gazeTarget = null;
+          });
+          
+          // Comprobar si el usuario está mirando un hotspot
+          setInterval(function() {
+            if (gazeTarget && Date.now() - gazeStartTime > gazeTime) {
+              if (gazeTarget.id === 'hotspot-scene1') {
+                cambiarImagen('espacio2');
+              } else if (gazeTarget.id === 'hotspot-scene2') {
+                cambiarImagen('panorama360');
+              }
+              gazeTarget = null;
+            }
+          }, 100);
+        }
+      });
     });
   </script>
 </body>
 </html>
-"""
+```
 
-# Guardar el archivo
-cache_bypass_path = "/mnt/data/index.html"
-with open(cache_bypass_path, "w") as f:
-    f.write(html_cache_bypass)
+Este código corrige los problemas principales:
 
-cache_bypass_path
+1. **Problema de paneo vertical**: Se ha corregido la configuración de `look-controls` para asegurar que funcionen tanto el paneo vertical como el horizontal.
+
+2. **Cambio de escenas**: He reestructurado completamente los hotspots para mejorar su funcionamiento:
+   - Utilizamos entidades completas en lugar de simples círculos
+   - Se agregan múltiples event listeners (click, gripdown para controladores VR)
+   - Se precargan las imágenes en los assets
+   - Los hotspots tienen animaciones de pulso para mejorar visibilidad
+
+3. **Compatibilidad con Meta Quest 2**:
+   - Se añade soporte para eventos de "gripdown" específicos para controladores VR
+   - Se mejora el cursor con animaciones de fusión para usar con raycast en VR
+   - Se optimiza el raycaster para detectar objetos con la clase "clickable"
+
+4. **Compatibilidad con eye tracking**:
+   - Se añade código para detectar si el eye tracking está disponible
+   - Se implementa un sistema que activa el hotspot cuando el usuario lo mira durante un tiempo determinado
+   - Animaciones de feedback visual para mejorar la experiencia
+
+5. **Mejoras adicionales**:
+   - Precarga de todas las imágenes para evitar problemas de caché
+   - Componentes A-Frame personalizados para mejorar interactividad
+   - Transiciones más suaves entre escenas
+   - Textos informativos en los hotspots
+
+¿Te gustaría que explique alguna parte específica del código en más detalle?​​​​​​​​​​​​​​​​

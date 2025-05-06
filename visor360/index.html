@@ -116,32 +116,33 @@ html_restaurado = """
     }
 
     function cambiarImagen(nuevaRuta) {
-      const fade = document.getElementById('fade-plane');
-      const img360 = document.querySelector('#img360');
-      const hotspot = document.querySelector('#hotspot');
-      const hotspot2 = document.querySelector('#hotspot2');
-      const iconNext = document.querySelector('#iconNext');
-      const iconBack = document.querySelector('#iconBack');
+  const fade = document.getElementById('fade-plane');
+  const sky = document.querySelector('#sky360');
+  const hotspot = document.querySelector('#hotspot');
+  const hotspot2 = document.querySelector('#hotspot2');
+  const iconNext = document.querySelector('#iconNext');
+  const iconBack = document.querySelector('#iconBack');
 
-      fade.style.opacity = 1;
-      setTimeout(() => {
-        img360.setAttribute('src', nuevaRuta);
-        if (nuevaRuta === 'espacio2.png') {
-          hotspot.setAttribute('visible', 'false');
-          hotspot2.setAttribute('visible', 'true');
-          iconNext.setAttribute('visible', 'false');
-          iconBack.setAttribute('visible', 'true');
-        } else {
-          hotspot.setAttribute('visible', 'true');
-          hotspot2.setAttribute('visible', 'false');
-          iconNext.setAttribute('visible', 'true');
-          iconBack.setAttribute('visible', 'false');
-        }
-        setTimeout(() => {
-          fade.style.opacity = 0;
-        }, 100);
-      }, 800);
+  fade.style.opacity = 1;
+
+  setTimeout(() => {
+    sky.setAttribute('src', nuevaRuta); // CAMBIO DIRECTO AL SKY
+    if (nuevaRuta === 'espacio2.png') {
+      hotspot.setAttribute('visible', 'false');
+      hotspot2.setAttribute('visible', 'true');
+      iconNext.setAttribute('visible', 'false');
+      iconBack.setAttribute('visible', 'true');
+    } else {
+      hotspot.setAttribute('visible', 'true');
+      hotspot2.setAttribute('visible', 'false');
+      iconNext.setAttribute('visible', 'true');
+      iconBack.setAttribute('visible', 'false');
     }
+    setTimeout(() => {
+      fade.style.opacity = 0;
+    }, 100);
+  }, 800);
+}
 
     document.body.addEventListener('gesturestart', function () {
       enterFullscreen();

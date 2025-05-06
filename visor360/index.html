@@ -1,12 +1,6 @@
-# HTML completo con:
-# - Fade corregido
-# - Cambio directo en <a-sky>
-# - Hotspots clicables con cursor VR (gaze)
-# - Íconos restaurados
-# - Zoom y fullscreen
-# - Paneo vertical/horizontal
+# HTML corregido con bypass de caché al apuntar a 'espacio2.png?v=2'
 
-html_vr_clickable = """
+html_cache_bypass = """
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -54,7 +48,6 @@ html_vr_clickable = """
   <a-scene>
     <a-assets>
       <img id="imgPanorama" src="panorama360.png" />
-      <img id="imgEspacio2" src="espacio2.png" />
     </a-assets>
 
     <a-sky id="sky360" src="#imgPanorama" rotation="0 -90 0"></a-sky>
@@ -72,7 +65,7 @@ html_vr_clickable = """
       radius="0.4" position="3 1.6 -4" rotation="0 0 0"
       material="color: #FFD700; opacity: 0.5; shader: flat"
       class="clickable" visible="true"
-      onclick="cambiarImagen('espacio2.png')">
+      onclick="cambiarImagen('espacio2.png?v=2')">
     </a-circle>
 
     <a-circle id="hotspot2"
@@ -87,7 +80,7 @@ html_vr_clickable = """
       src="https://upload.wikimedia.org/wikipedia/commons/7/72/Arrow_east_font_awesome.svg"
       position="3 2 -4" scale="0.5 0.5 0.5"
       look-at="#cam" visible="true"
-      onclick="cambiarImagen('espacio2.png')">
+      onclick="cambiarImagen('espacio2.png?v=2')">
     </a-image>
 
     <a-image id="iconBack"
@@ -128,11 +121,11 @@ html_vr_clickable = """
 
       setTimeout(() => {
         sky.setAttribute('src', nuevaRuta);
-        hotspot.setAttribute('visible', nuevaRuta === 'panorama360.png');
-        hotspot2.setAttribute('visible', nuevaRuta === 'espacio2.png');
-        iconNext.setAttribute('visible', nuevaRuta === 'panorama360.png');
-        iconBack.setAttribute('visible', nuevaRuta === 'espacio2.png');
-
+        const isEspacio2 = nuevaRuta.includes("espacio2");
+        hotspot.setAttribute('visible', !isEspacio2);
+        hotspot2.setAttribute('visible', isEspacio2);
+        iconNext.setAttribute('visible', !isEspacio2);
+        iconBack.setAttribute('visible', isEspacio2);
         setTimeout(() => {
           fade.style.opacity = 0;
         }, 100);
@@ -147,9 +140,9 @@ html_vr_clickable = """
 </html>
 """
 
-# Guardar como index.html
-final_vr_path = "/mnt/data/index.html"
-with open(final_vr_path, "w") as f:
-    f.write(html_vr_clickable)
+# Guardar el archivo
+cache_bypass_path = "/mnt/data/index.html"
+with open(cache_bypass_path, "w") as f:
+    f.write(html_cache_bypass)
 
-final_vr_path
+cache_bypass_path

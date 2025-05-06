@@ -1,143 +1,92 @@
-# Generar HTML completo final con soporte para pitch (paneo vertical), fade, sonido, hotspots y navegación
-html_final = """
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <title>Visor 360 – demokittens</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-  <style>
-    body { margin: 0; overflow: hidden; }
-    .btn {
-      position: absolute;
-      z-index: 999;
-      background: rgba(0, 0, 0, 0.6);
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      font-family: sans-serif;
-    }
-    #fullscreen-btn { top: 10px; right: 10px; }
-    #zoom-in-btn { bottom: 60px; left: 10px; }
-    #zoom-out-btn { bottom: 10px; left: 10px; }
-    #next-btn { top: 10px; left: 10px; }
-    #home-btn { top: 60px; left: 10px; }
-    #fade-plane {
-      position: fixed;
-      width: 100%;
-      height: 100%;
-      background: black;
-      top: 0;
-      left: 0;
-      opacity: 0;
-      z-index: 998;
-      pointer-events: none;
-      transition: opacity 1s ease;
-    }
-  </style>
-</head>
-<body>
-  <div id="fade-plane"></div>
-
-  <button class="btn" id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
-  <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
-  <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
-  <button class="btn" id="next-btn" onclick="cambiarImagen('espacio2.png')">→</button>
-  <button class="btn" id="home-btn" onclick="cambiarImagen('panorama360.png')">Inicio</button>
-
-  <a-scene>
-    <a-assets>
-      <img id="img360" src="panorama360.png" />
-      <audio id="clic-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_38e9743cf2.mp3?filename=click-124467.mp3"></audio>
-    </a-assets>
-
-    <a-sky id="sky360" src="#img360" rotation="0 -90 0"></a-sky>
-
-    <a-entity 
-      id="cam" 
-      camera="fov: 80" 
-      look-controls="touchEnabled: true; magicWindowTrackingEnabled: true" 
-      wasd-controls 
-      position="0 1.6 0">
-    </a-entity>
-
-    <a-entity 
-      id="hotspot"
-      geometry="primitive: circle; radius: 0.3"
-      material="color: #FFD700; opacity: 0.5; shader: flat"
-      position="2 1.5 -3"
-      class="clickable"
-      visible="true"
-      onclick="cambiarImagen('espacio2.png')"
-    ></a-entity>
-
-    <a-entity 
-      id="hotspot2"
-      geometry="primitive: circle; radius: 0.3"
-      material="color: #00BFFF; opacity: 0.5; shader: flat"
-      position="-2 1.5 -3"
-      class="clickable"
-      visible="false"
-      onclick="cambiarImagen('panorama360.png')"
-    ></a-entity>
-  </a-scene>
-
-  <script>
-    function enterFullscreen() {
-      const scene = document.querySelector('a-scene');
-      if (scene.requestFullscreen) {
-        scene.requestFullscreen();
-      } else if (scene.webkitRequestFullscreen) {
-        scene.webkitRequestFullscreen();
+  <head>
+    <meta charset="UTF-8" />
+    <title>Visor 360 – demokittens</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <style>
+      body { margin: 0; overflow: hidden; }
+      .btn {
+        position: absolute;
+        z-index: 999;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 5px;
+        font-size: 18px;
+        cursor: pointer;
       }
-    }
+      #fullscreen-btn { top: 10px; right: 10px; }
+      #zoom-in-btn { bottom: 60px; left: 10px; }
+      #zoom-out-btn { bottom: 10px; left: 10px; }
+    </style>
+  </head>
+  <body>
+    <button class="btn" id="fullscreen-btn" onclick="enterFullscreen()">Pantalla completa</button>
+    <button class="btn" id="zoom-in-btn" onclick="adjustFOV(-10)">＋</button>
+    <button class="btn" id="zoom-out-btn" onclick="adjustFOV(10)">－</button>
 
-    function adjustFOV(delta) {
-      const camera = document.querySelector('#cam');
-      const currentFOV = camera.getAttribute('camera').fov;
-      const newFOV = Math.max(30, Math.min(120, currentFOV + delta));
-      camera.setAttribute('camera', 'fov', newFOV);
-    }
+    <a-scene>
+      <a-sky id="sky" src="panorama360.png" rotation="0 -90 0"></a-sky>
+      
+      <!-- Cámara con controles -->
+      <a-entity id="cam" camera="fov: 80" look-controls wasd-controls position="0 1.6 0"></a-entity>
 
-    function cambiarImagen(nuevaRuta) {
-      const fade = document.getElementById('fade-plane');
-      const audio = document.getElementById('clic-sound');
-      const img360 = document.querySelector('#img360');
-      const hotspot = document.querySelector('#hotspot');
-      const hotspot2 = document.querySelector('#hotspot2');
+      <!-- Punto de interacción: cambia a espacio2.png -->
+      <a-image 
+        src="https://cdn-icons-png.flaticon.com/512/60/60995.png"
+        position="3 1.6 -4"
+        scale="0.5 0.5 0.5"
+        transparent="true"
+        opacity="0.8"
+        class="clickable"
+        event-set__enter="_event: mouseenter; opacity: 1"
+        event-set__leave="_event: mouseleave; opacity: 0.8"
+        onclick="changeScene('espacio2.png')">
+      </a-image>
+      
+      <!-- Punto de regreso a panorama360 -->
+      <a-image 
+        src="https://cdn-icons-png.flaticon.com/512/25/25694.png"
+        position="-3 1.6 -4"
+        scale="0.5 0.5 0.5"
+        transparent="true"
+        opacity="0.8"
+        class="clickable"
+        event-set__enter="_event: mouseenter; opacity: 1"
+        event-set__leave="_event: mouseleave; opacity: 0.8"
+        onclick="changeScene('panorama360.png')">
+      </a-image>
+    </a-scene>
 
-      fade.style.opacity = 1;
-      audio.play();
-
-      setTimeout(() => {
-        img360.setAttribute('src', nuevaRuta);
-        if (nuevaRuta === 'espacio2.png') {
-          hotspot.setAttribute('visible', 'false');
-          hotspot2.setAttribute('visible', 'true');
-        } else {
-          hotspot.setAttribute('visible', 'true');
-          hotspot2.setAttribute('visible', 'false');
+    <script>
+      function enterFullscreen() {
+        const scene = document.querySelector('a-scene');
+        if (scene.requestFullscreen) {
+          scene.requestFullscreen();
+        } else if (scene.webkitRequestFullscreen) {
+          scene.webkitRequestFullscreen();
         }
-        setTimeout(() => {
-          fade.style.opacity = 0;
-        }, 100);
-      }, 800);
-    }
+      }
 
-    document.body.addEventListener('gesturestart', function () {
-      enterFullscreen();
-    });
-  </script>
-</body>
+      function adjustFOV(delta) {
+        const camera = document.querySelector('#cam');
+        const currentFOV = camera.getAttribute('camera').fov;
+        const newFOV = Math.max(30, Math.min(120, currentFOV + delta));
+        camera.setAttribute('camera', 'fov', newFOV);
+      }
+
+      function changeScene(imageName) {
+        const sky = document.querySelector('#sky');
+        sky.setAttribute('src', imageName);
+      }
+
+      // iOS gesture fallback
+      document.body.addEventListener('gesturestart', function () {
+        enterFullscreen();
+      });
+    </script>
+  </body>
 </html>
-"""
-
-# Guardar el archivo final
-final_html_path = "/mnt/data/index.html"
-with open(final_html_path, "w") as f:
-    f.write(html_final)
-
-final_html_path

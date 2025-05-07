@@ -1,13 +1,8 @@
-Entiendo que el problema persiste con los taps y la navegación entre espacios. Vamos a simplificar aún más el código para enfocarnos exclusivamente en que los taps funcionen correctamente, asegurándonos de que sea compatible con Meta Quest 2.
-
-Aquí hay una versión simplificada pero que debería funcionar bien tanto en dispositivos móviles como en Meta Quest 2:
-
-```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Visor 360 – Meta Quest Compatible</title>
+  <title>Visor 360 – Navegación Multiespacio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <style>
@@ -52,7 +47,8 @@ Aquí hay una versión simplificada pero que debería funcionar bien tanto en di
   <a-scene>
     <a-assets>
       <img id="imgPanorama" src="panorama360.png?v=1" crossorigin="anonymous" />
-      <img id="imgEspacio2" src="espacio2.png?v=2" crossorigin="anonymous" />
+      <img id="imgEspacio2" src="espacio2.JPG?v=1" crossorigin="anonymous" />
+      <img id="imgEspacio3" src="espacio3.PNG?v=1" crossorigin="anonymous" />
     </a-assets>
 
     <a-sky id="sky360" src="#imgPanorama" rotation="0 -90 0"></a-sky>
@@ -74,26 +70,71 @@ Aquí hay una versión simplificada pero que debería funcionar bien tanto en di
       </a-entity>
     </a-entity>
 
-    <!-- Hotspot para Espacio 2 -->
-    <a-sphere id="hotspot1" class="clickable" position="3 1.6 -4" radius="0.4" 
-              material="color: red; opacity: 0.8; shader: flat"
-              animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
-              onclick="irAEspacio2()">
-    </a-sphere>
+    <!-- ===== ESPACIO 1 (PANORAMA) HOTSPOTS ===== -->
+    <!-- Grupo de hotspots visibles solo en espacio1 -->
+    <a-entity id="hotspots-espacio1">
+      <!-- Hotspot para ir a Espacio 2 -->
+      <a-sphere class="clickable" position="3 1.6 -4" radius="0.4" 
+                material="color: red; opacity: 0.8; shader: flat"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
+                onclick="cambiarEscena('espacio2')">
+        <a-text value="Espacio 2" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+      </a-sphere>
+      
+      <!-- Hotspot para ir a Espacio 3 -->
+      <a-sphere class="clickable" position="-3 1.6 -4" radius="0.4" 
+                material="color: green; opacity: 0.8; shader: flat"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
+                onclick="cambiarEscena('espacio3')">
+        <a-text value="Espacio 3" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+      </a-sphere>
+    </a-entity>
 
-    <!-- Hotspot para volver a Panorama -->
-    <a-sphere id="hotspot2" class="clickable" position="-3 1.6 -4" radius="0.4" 
-              material="color: blue; opacity: 0.8; shader: flat"
-              animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
-              onclick="volverAPanorama()"
-              visible="false">
-    </a-sphere>
+    <!-- ===== ESPACIO 2 HOTSPOTS ===== -->
+    <!-- Grupo de hotspots visibles solo en espacio2 -->
+    <a-entity id="hotspots-espacio2" visible="false">
+      <!-- Hotspot para ir a Espacio 1 -->
+      <a-sphere class="clickable" position="3 1.6 -4" radius="0.4" 
+                material="color: blue; opacity: 0.8; shader: flat"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
+                onclick="cambiarEscena('espacio1')">
+        <a-text value="Inicio" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+      </a-sphere>
+      
+      <!-- Hotspot para ir a Espacio 3 -->
+      <a-sphere class="clickable" position="-3 1.6 -4" radius="0.4" 
+                material="color: green; opacity: 0.8; shader: flat"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
+                onclick="cambiarEscena('espacio3')">
+        <a-text value="Espacio 3" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+      </a-sphere>
+    </a-entity>
+
+    <!-- ===== ESPACIO 3 HOTSPOTS ===== -->
+    <!-- Grupo de hotspots visibles solo en espacio3 -->
+    <a-entity id="hotspots-espacio3" visible="false">
+      <!-- Hotspot para ir a Espacio 1 -->
+      <a-sphere class="clickable" position="3 1.6 -4" radius="0.4" 
+                material="color: blue; opacity: 0.8; shader: flat"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
+                onclick="cambiarEscena('espacio1')">
+        <a-text value="Inicio" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+      </a-sphere>
+      
+      <!-- Hotspot para ir a Espacio 2 -->
+      <a-sphere class="clickable" position="-3 1.6 -4" radius="0.4" 
+                material="color: red; opacity: 0.8; shader: flat"
+                animation="property: scale; to: 1.2 1.2 1.2; dir: alternate; dur: 1000; loop: true"
+                onclick="cambiarEscena('espacio2')">
+        <a-text value="Espacio 2" align="center" position="0 0.6 0" scale="0.8 0.8 0.8" color="#FFFFFF"></a-text>
+      </a-sphere>
+    </a-entity>
   </a-scene>
 
   <script>
     // Variables globales
     const debug = document.getElementById('debug');
-    let currentScene = 'panorama360';
+    let currentScene = 'espacio1';
     
     // Añadimos un registro de depuración simple
     function log(message) {
@@ -122,49 +163,58 @@ Aquí hay una versión simplificada pero que debería funcionar bien tanto en di
       log(`FOV ajustado a: ${newFOV}`);
     }
 
-    // Función para ir a Espacio 2
-    function irAEspacio2() {
-      log('Cambiando a espacio2...');
-      cambiarEscena('espacio2');
-    }
-    
-    // Función para volver a Panorama
-    function volverAPanorama() {
-      log('Volviendo a panorama360...');
-      cambiarEscena('panorama360');
-    }
+    // Configuración de los espacios
+    const espacios = {
+      espacio1: {
+        skyId: '#imgPanorama',
+        hotspotGroupId: 'hotspots-espacio1'
+      },
+      espacio2: {
+        skyId: '#imgEspacio2',
+        hotspotGroupId: 'hotspots-espacio2'
+      },
+      espacio3: {
+        skyId: '#imgEspacio3',
+        hotspotGroupId: 'hotspots-espacio3'
+      }
+    };
 
     // Función unificada para cambiar escenas
     function cambiarEscena(escena) {
+      // Validar que la escena existe
+      if (!espacios[escena]) {
+        log(`Error: La escena ${escena} no existe`);
+        return;
+      }
+      
       // Evitar cambios repetidos
       if (currentScene === escena) {
         log(`Ya estamos en ${escena}`);
         return;
       }
       
+      log(`Cambiando de ${currentScene} a ${escena}...`);
+      
       const fade = document.getElementById('fade-plane');
       const sky = document.getElementById('sky360');
-      const hotspot1 = document.getElementById('hotspot1');
-      const hotspot2 = document.getElementById('hotspot2');
       
       // Activar fundido a negro
       fade.style.opacity = 1;
       
       // Cambiar escena después de un breve retraso
       setTimeout(() => {
-        if (escena === 'espacio2') {
-          log('Mostrando espacio2');
-          sky.setAttribute('src', '#imgEspacio2');
-          hotspot1.setAttribute('visible', false);
-          hotspot2.setAttribute('visible', true);
-          currentScene = 'espacio2';
-        } else {
-          log('Mostrando panorama360');
-          sky.setAttribute('src', '#imgPanorama');
-          hotspot1.setAttribute('visible', true);
-          hotspot2.setAttribute('visible', false);
-          currentScene = 'panorama360';
+        // Cambiar el cielo
+        sky.setAttribute('src', espacios[escena].skyId);
+        
+        // Actualizar visibilidad de grupos de hotspots
+        for (const espacio in espacios) {
+          const hotspotsGroup = document.getElementById(espacios[espacio].hotspotGroupId);
+          hotspotsGroup.setAttribute('visible', espacio === escena);
         }
+        
+        // Actualizar la escena actual
+        currentScene = escena;
+        log(`Ahora en: ${escena}`);
         
         // Quitar fundido después de otro breve retraso
         setTimeout(() => {
@@ -176,22 +226,21 @@ Aquí hay una versión simplificada pero que debería funcionar bien tanto en di
     // Añadir soporte para controladores de VR
     AFRAME.registerComponent('vr-controller-listener', {
       init: function() {
-        this.el.addEventListener('gripdown', function(evt) {
-          log('Botón de agarre presionado');
-          if (this.id === 'hotspot1') {
-            irAEspacio2();
-          } else if (this.id === 'hotspot2') {
-            volverAPanorama();
-          }
-        });
+        // Hacemos que todos los hotspots reaccionen a eventos de VR
+        const allHotspots = document.querySelectorAll('.clickable');
         
-        this.el.addEventListener('triggerdown', function(evt) {
-          log('Gatillo presionado');
-          if (this.id === 'hotspot1') {
-            irAEspacio2();
-          } else if (this.id === 'hotspot2') {
-            volverAPanorama();
-          }
+        allHotspots.forEach(hotspot => {
+          hotspot.addEventListener('gripdown', function(evt) {
+            log('Botón de agarre presionado');
+            const targetScene = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            cambiarEscena(targetScene);
+          });
+          
+          hotspot.addEventListener('triggerdown', function(evt) {
+            log('Gatillo presionado');
+            const targetScene = this.getAttribute('onclick').match(/'([^']+)'/)[1];
+            cambiarEscena(targetScene);
+          });
         });
       }
     });
@@ -204,47 +253,13 @@ Aquí hay una versión simplificada pero que debería funcionar bien tanto en di
       scene.addEventListener('loaded', function() {
         log('A-Frame cargado. Inicializando...');
         
-        // Añadir componente de escucha de controladores a los hotspots
-        document.getElementById('hotspot1').setAttribute('vr-controller-listener', '');
-        document.getElementById('hotspot2').setAttribute('vr-controller-listener', '');
+        // Añadir componente de escucha de controladores a la escena
+        scene.setAttribute('vr-controller-listener', '');
         
-        // Añadir eventos para dispositivos táctiles
-        document.getElementById('hotspot1').addEventListener('click', irAEspacio2);
-        document.getElementById('hotspot2').addEventListener('click', volverAPanorama);
-        
-        log('¡Aplicación iniciada! Toca los puntos rojos/azules para navegar.');
+        // Confirmar hotspots correctamente configurados
+        log('¡Visor 360 iniciado! Toca los hotspots para navegar entre espacios.');
       });
     });
   </script>
 </body>
 </html>
-```
-
-Los cambios clave que he realizado son:
-
-1. **Simplificación extrema de los hotspots**: He usado esferas simples (a-sphere) con colores vivos (rojo y azul) para máxima visibilidad.
-
-2. **Click directo con eventos onclick**: He añadido el atributo onclick directamente en los elementos A-Frame para que respondan inmediatamente a los clics.
-
-3. **Panel de depuración**: He añadido un panel de texto en la esquina superior izquierda para mostrar mensajes de estado, lo que te ayudará a identificar si los eventos se están registrando correctamente.
-
-4. **Soporte específico para controladores VR**: He añadido un componente que escucha eventos 'gripdown' y 'triggerdown' específicos de Meta Quest 2.
-
-5. **Eventos redundantes**: Los eventos están vinculados de varias maneras diferentes para asegurar que al menos uno funcione.
-
-6. **Reducción del tiempo de transición**: Las transiciones ahora son más rápidas (300ms en lugar de 500ms) para una respuesta más inmediata.
-
-7. **Comprobación de estado actual**: El código ahora verifica si ya estás en la escena a la que intentas ir para evitar problemas.
-
-Para utilizar este código con Meta Quest 2, asegúrate de que:
-
-1. El sitio web esté alojado en un servidor HTTPS (requisito para WebVR)
-2. Accedas desde el navegador Oculus o desde el navegador Quest
-
-Si aún tienes problemas, podemos intentar estas soluciones adicionales:
-
-1. Hacer los hotspots mucho más grandes para que sean más fáciles de apuntar
-2. Usar un cursor más grande y con un tiempo de fusión más corto
-3. Implementar una versión que responda a la mirada prolongada (similar al eye tracking pero sin usar API específicas)
-
-¿Quieres que intente alguna de estas soluciones adicionales?​​​​​​​​​​​​​​​​
